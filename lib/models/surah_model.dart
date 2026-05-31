@@ -1,0 +1,39 @@
+class SurahModel {
+  final int number;
+  final String name;
+  final String englishName;
+  final String englishNameTranslation;
+  final int numberOfAyahs;
+  final String revelationType;
+
+  SurahModel({
+    required this.number,
+    required this.name,
+    required this.englishName,
+    required this.englishNameTranslation,
+    required this.numberOfAyahs,
+    required this.revelationType,
+  });
+
+  factory SurahModel.fromJson(Map<String, dynamic> json) {
+    return SurahModel(
+      number: json['number'] as int,
+      name: json['name'] as String,
+      englishName: json['englishName'] as String,
+      englishNameTranslation: json['englishNameTranslation'] as String,
+      numberOfAyahs: json['numberOfAyahs'] as int,
+      revelationType: json['revelationType'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'number': number,
+      'name': name,
+      'englishName': englishName,
+      'englishNameTranslation': englishNameTranslation,
+      'numberOfAyahs': numberOfAyahs,
+      'revelationType': revelationType,
+    };
+  }
+}

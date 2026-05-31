@@ -1,0 +1,36 @@
+name: quranapp
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  get: ^4.7.3
+  http: ^1.6.0
+  shared_preferences: ^2.5.5
+  just_audio: ^0.9.36
+  audio_session: ^0.1.25
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/images/app_icon.png
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  adaptive_icon_background: "#070B16"
+  adaptive_icon_foreground: "assets/images/app_icon.png"
+
