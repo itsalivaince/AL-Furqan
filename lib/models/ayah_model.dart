@@ -40,6 +40,18 @@ class AyahModel {
     );
   }
 
+  factory AyahModel.fromStorageJson(Map<String, dynamic> json) {
+    return AyahModel(
+      number: json['number'] as int,
+      numberInSurah: json['numberInSurah'] as int,
+      text: json['text'] as String,
+      urduTranslation: json['urduTranslation'] as String,
+      juz: json['juz'] as int,
+      surahNumber: json['surahNumber'] as int,
+      surahName: json['surahName'] as String,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'number': number,

@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import '../controllers/quran_controller.dart';
 import '../controllers/audio_controller.dart';
 import '../controllers/progress_controller.dart';
+import '../controllers/bookmark_controller.dart';
 import '../models/ayah_model.dart';
+import '../widgets/ayah_card.dart';
 
 class SurahReaderScreen extends StatefulWidget {
   final int? surahNumber;
@@ -27,6 +29,7 @@ class _SurahReaderScreenState extends State<SurahReaderScreen> {
   final QuranController quranController = Get.find<QuranController>();
   final AudioController audioController = Get.put(AudioController());
   final ProgressController progressController = Get.find<ProgressController>();
+  final BookmarkController bookmarkController = Get.find<BookmarkController>();
 
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _listViewKey = GlobalKey();
@@ -269,92 +272,16 @@ class _SurahReaderScreenState extends State<SurahReaderScreen> {
                 itemCount: ayahs.length,
                 itemBuilder: (context, index) {
                   final ayah = ayahs[index];
-                  return Obx(() {
-                    final isPlaying = audioController.currentPlayingAyahIndex.value == index;
-                    return GestureDetector(
-                       key: _itemKeys.length > index ? _itemKeys[index] : null,
-                      onTap: () {
-                        audioController.playAudio(index);
-                        _markAyahAsRead(ayah);
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        margin: const EdgeInsets.only(bottom: 24),
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: isPlaying
-                              ? const Color(0xFFFFD700).withOpacity(0.1)
-                              : Colors.white.withOpacity(0.02),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: isPlaying
-                                ? const Color(0xFFFFD700).withOpacity(0.5)
-                                : Colors.white.withOpacity(0.05),
-                            width: 1,
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            // Ayah Number Badge
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black26,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    widget.juzNumber != null
-                                        ? '${ayah.surahName} • Ayah ${ayah.numberInSurah}'
-                                        : '${ayah.numberInSurah}',
-                                    style: TextStyle(
-                                      color: Colors.white.withOpacity(0.6),
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                                if (isPlaying)
-                                  const Icon(Icons.volume_up_rounded, color: Color(0xFFFFD700), size: 18),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            // Arabic Text
-                            Text(
-                              ayah.text,
-                              textAlign: TextAlign.right,
-                              textDirection: TextDirection.rtl,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 26,
-                                fontFamily: 'Amiri',
-                                height: 1.8,
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            // Divider
-                            Divider(color: Colors.white.withOpacity(0.1)),
-                            const SizedBox(height: 16),
-                            // Translation
-                            Text(
-                              ayah.urduTranslation,
-                              textAlign: TextAlign.right,
-                              textDirection: TextDirection.rtl,
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
-                                fontSize: 18,
-                                height: 1.6,
-                                fontFamily: 'Jameel Noori Nastaleeq',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  });
+                  return AyahCard(
+                    key: _itemKeys.length > index ? _itemKeys[index] : null,
+                    ayah: ayah,
+                    index: index,
+                    showSurahName: widget.juzNumber != null,
+                    onTap: () {
+                      audioController.playAudio(index);
+                      _markAyahAsRead(ayah);
+                    },
+                  );
                 },
               );
             }),

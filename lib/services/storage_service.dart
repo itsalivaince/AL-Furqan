@@ -58,4 +58,9 @@ class StorageService extends GetxService {
   // 5. Completed Ayahs Today
   int get completedAyahsToday => _prefs.getInt(_keyCompletedAyahsToday) ?? 7; // Default 7 to showcase UI
   Future<bool> setCompletedAyahsToday(int value) => _prefs.setInt(_keyCompletedAyahsToday, value);
+
+  // 6. Bookmarked Ayahs List
+  static const _keyBookmarks = 'bookmarks_list';
+  List<String> get bookmarksList => _prefs.getStringList(_keyBookmarks) ?? [];
+  Future<bool> setBookmarksList(List<String> values) => _prefs.setStringList(_keyBookmarks, values);
 }

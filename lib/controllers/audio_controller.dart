@@ -4,10 +4,12 @@ import 'package:just_audio/just_audio.dart';
 import 'package:http/http.dart' as http;
 import '../models/ayah_model.dart';
 import '../services/storage_service.dart';
+import '../services/quran_audio_handler.dart';
+import 'package:audio_service/audio_service.dart';
 import 'progress_controller.dart';
 
 class AudioController extends GetxController {
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  final QuranAudioHandler _audioHandler = Get.find<QuranAudioHandler>();
   
   // Available reciters mapping
   final List<Map<String, String>> availableReciters = [
@@ -47,14 +49,14 @@ class AudioController extends GetxController {
     )['name']!;
     
     // Listen to player state changes
-    _audioPlayer.playerStateStream.listen((state) {
+    _audioHandler.player.playerStateStream.listen((state) {
       isPlaying.value = state.playing;
       isBuffering.value = state.processingState == ProcessingState.buffering || 
                           state.processingState == ProcessingState.loading;
     });
 
     // Listen to current index changes to sync playing index and trigger last read updates
-    _audioPlayer.currentIndexStream.listen((index) {
+    _audioHandler.player.currentIndexStream.listen((index) {
       if (index != null && _currentAyahs.isNotEmpty) {
         // Interleaved layout: even index = Arabic, odd index = Urdu translation
         final ayahIndex = index ~/ 2;
@@ -64,6 +66,18 @@ class AudioController extends GetxController {
         if (index % 2 == 0 && ayahIndex < _currentAyahs.length) {
           try {
              final ayah = _currentAyahs[ayahIndex];
+             
+             // Map current Ayah to background media notification
+             _audioHandler.mediaItem.add(
+               MediaItem(
+                 id: '${selectedReciterId.value}_${ayah.number}',
+                 title: 'Ayah ${ayah.numberInSurah}',
+                 album: ayah.surahName,
+                 artist: selectedReciterName.value,
+                 artUri: Uri.parse('asset:///assets/images/app_icon.png'),
+               )
+             );
+
              // Ensure ProgressController is active before updating
              if (Get.isRegistered<ProgressController>()) {
                final progressController = Get.find<ProgressController>();
@@ -150,7 +164,7 @@ class AudioController extends GetxController {
         print('PAYLOAD INTEGRITY CHECK ERROR: $e');
       }
     }
-      await _audioPlayer.setAudioSource(
+      await _audioHandler.player.setAudioSource(
         ConcatenatingAudioSource(children: sources),
         initialIndex: 0,
         initialPosition: Duration.zero,
@@ -168,15 +182,15 @@ class AudioController extends GetxController {
       final playlistIndex = index * 2;
       print('Playing Audio at playlist index: $playlistIndex');
 
-      await _audioPlayer.setVolume(1.0);
-      await _audioPlayer.setSpeed(1.0);
-      await _audioPlayer.setLoopMode(LoopMode.off);
+      await _audioHandler.player.setVolume(1.0);
+      await _audioHandler.player.setSpeed(1.0);
+      await _audioHandler.player.setLoopMode(LoopMode.off);
 
       final session = await AudioSession.instance;
       await session.setActive(true);
 
-      await _audioPlayer.seek(Duration.zero, index: playlistIndex);
-      await _audioPlayer.play();
+      await _audioHandler.player.seek(Duration.zero, index: playlistIndex);
+      await _audioHandler.play();
     } catch (e) {
       print('Error playing audio: $e');
       stopAudio();
@@ -185,30 +199,29 @@ class AudioController extends GetxController {
 
   Future<void> togglePlayPause() async {
     if (isPlaying.value) {
-      await _audioPlayer.pause();
+      await _audioHandler.pause();
     } else {
       if (currentPlayingAyahIndex.value == -1 && _currentAyahs.isNotEmpty) {
         await playAudio(0);
       } else {
-        await _audioPlayer.setVolume(1.0);
-        await _audioPlayer.setSpeed(1.0);
-        await _audioPlayer.setLoopMode(LoopMode.off);
+        await _audioHandler.player.setVolume(1.0);
+        await _audioHandler.player.setSpeed(1.0);
+        await _audioHandler.player.setLoopMode(LoopMode.off);
 
         final session = await AudioSession.instance;
         await session.setActive(true);
 
-        await _audioPlayer.play();
+        await _audioHandler.play();
       }
     }
   }
 
   Future<void> stopAudio() async {
-    await _audioPlayer.stop();
+    await _audioHandler.stop();
   }
 
   @override
   void onClose() {
-    _audioPlayer.dispose();
     super.onClose();
   }
 }

@@ -8,6 +8,8 @@ import 'daily_goal_setup.dart';
 import 'surah_list_screen.dart';
 import 'surah_reader_screen.dart';
 import 'juz_list_screen.dart';
+import 'bookmarks_view.dart';
+import 'prayer_times_view.dart';
 
 class HomeDashboard extends StatefulWidget {
   const HomeDashboard({super.key});
@@ -119,29 +121,32 @@ class _HomeDashboardState extends State<HomeDashboard> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Assalam-o-Alaikum',
-                              style: TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                                letterSpacing: -0.5,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'AL-Quran',
+                                style: TextStyle(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                  letterSpacing: -0.5,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'May peace be upon you',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white.withOpacity(0.5),
+                              const SizedBox(height: 4),
+                              Text(
+                                'And when the Quran is recited, listen to it attentively and remain silent, that you may receive mercy.',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white.withOpacity(0.5),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
+                        const SizedBox(width: 16),
                         // Settings Button with soft glassmorphic style
                         Container(
                           decoration: BoxDecoration(
@@ -237,14 +242,18 @@ class _HomeDashboardState extends State<HomeDashboard> {
                           subtitle: 'Saved ayahs',
                           icon: Icons.bookmark_rounded,
                           accentColor: const Color(0xFFEF4444), // Crimson
-                          onTap: () {},
+                          onTap: () {
+                            Get.to(() => const BookmarksView());
+                          },
                         ),
                         _buildMenuCard(
                           title: 'Prayer Times',
                           subtitle: 'Daily schedule',
                           icon: Icons.access_time_rounded,
                           accentColor: const Color(0xFF10B981), // Emerald
-                          onTap: () {},
+                          onTap: () {
+                            Get.to(() => const PrayerTimesView());
+                          },
                         ),
                       ],
                     ),
